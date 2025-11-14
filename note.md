@@ -200,6 +200,81 @@ for (auto it = vec.begin(); it != vec.end(); ++it) {
 4. 频繁中间插入 / 删除用 `QLinkedList`，但尽量避免（`QList` 通常足够高效）。
 5. 字节数据用 `QByteArray`，字符串用 `QString`（而非 `std::string`）。
 
+### 3.4 QT类库的模块
+
+#### 3.4.1 基础核心模块
+
+| 模块名称       | 功能说明                                                     | 核心类示例                                                   |
+| -------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| **Qt Core**    | 提供 Qt 最核心的非 GUI 功能：元对象系统、容器类、事件循环、线程、时间日期、文件 I/O 等，是所有模块的基础。 | `QObject`、`QString`、`QList`、`QThread`、`QFile`            |
+| **Qt Gui**     | 提供 GUI 基础功能：绘图、字体、颜色、图像、输入设备（鼠标 / 键盘）、窗口系统集成等。 | `QPainter`、`QImage`、`QFont`、`QColor`、`QMouseEvent`       |
+| **Qt Widgets** | 提供传统桌面端的 GUI 控件（按钮、文本框、窗口等），基于 `Qt Gui` 构建，支持经典的窗口界面开发。 | `QWidget`、`QPushButton`、`QLineEdit`、`QMainWindow`、`QDialog` |
+
+#### 3.4.2 扩展功能模块
+
+| 模块名称                    | 功能说明                                                     | 核心类示例                                          |
+| --------------------------- | ------------------------------------------------------------ | --------------------------------------------------- |
+| **Qt Network**              | 提供跨平台网络编程支持：TCP/UDP 套接字、HTTP/HTTPS 协议、FTP、网络请求等。 | `QTcpSocket`、`QUdpSocket`、`QNetworkAccessManager` |
+| **Qt Sql**                  | 提供数据库操作接口，支持 SQLite、MySQL、PostgreSQL、Oracle 等主流数据库。 | `QSqlDatabase`、`QSqlQuery`、`QSqlTableModel`       |
+| **Qt Xml / Qt XmlPatterns** | 处理 XML 数据：`Qt Xml` 提供基础 XML 解析 / 生成，`Qt XmlPatterns` 支持 XSLT 和 XPath 高级操作。 | `QDomDocument`、`QXmlStreamReader`、`QXmlQuery`     |
+| **Qt Multimedia**           | 提供多媒体功能：音频 / 视频播放、录音、摄像头采集、音频设备管理等。 | `QMediaPlayer`、`QCamera`、`QAudioRecorder`         |
+| **Qt Multimedia Widgets**   | 基于 `Qt Widgets` 的多媒体控件（如视频播放器窗口）。         | `QVideoWidget`、`QMediaPlaylist`                    |
+| **Qt Print Support**        | 提供打印功能：打印文档、打印机配置、打印预览等。             | `QPrinter`、`QPrintDialog`、`QPrintPreviewWidget`   |
+
+#### 3.4.3 界面与交互模块
+
+专注于用户界面设计和交互体验。
+
+| 模块名称                   | 功能说明                                                     | 核心类示例                                |
+| -------------------------- | ------------------------------------------------------------ | ----------------------------------------- |
+| **Qt Designer Components** | 用于扩展 Qt Designer（可视化界面设计工具），支持自定义控件在 Designer 中使用。 | `QDesignerCustomWidgetInterface`          |
+| **Qt UI Tools**            | 加载 Qt Designer 生成的 `.ui` 文件（无需手动转换为代码）。   | `QUiLoader`                               |
+| **Qt Style Sheets**        | 支持 CSS 风格的界面样式定制（类似网页样式表），用于美化控件外观。 | 无特定类，通过 `setStyleSheet()` 方法使用 |
+
+#### 3.4.4 图形与动画模块
+
+| 模块名称           | 功能说明                                                     | 核心类示例                                         |
+| ------------------ | ------------------------------------------------------------ | -------------------------------------------------- |
+| **Qt 2D Graphics** | 高级 2D 绘图功能：矢量图形、路径、渐变、抗锯齿等（基于 `Qt Gui` 扩展）。 | `QGraphicsScene`、`QGraphicsView`、`QGraphicsItem` |
+| **Qt 3D**          | 提供 3D 渲染引擎：3D 模型加载、光照、材质、相机控制等（Qt 5 后新增）。 | `Q3DScene`、`Q3DCamera`、`Q3DLight`                |
+| **Qt Animation**   | 实现界面动画效果：控件移动、缩放、透明度变化，支持动画曲线和过渡效果。 | `QPropertyAnimation`、`QParallelAnimationGroup`    |
+
+#### 3.4.5 跨平台与系统集成模块
+
+| 模块名称                              | 功能说明                                                     | 核心类示例                                                   |
+| ------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| **Qt Platform Headers**               | 访问特定平台的底层功能（如 Windows API、X11 等），用于跨平台适配的高级需求。 | 平台相关，如 `QWinWidget`（Windows）                         |
+| **Qt DBus**                           | 支持 D-Bus 协议（Linux 桌面系统的进程间通信标准），用于 Linux 平台下的进程通信。 | `QDBusInterface`、`QDBusMessage`                             |
+| **Qt Android Extras / Qt iOS Extras** | 提供 Android/iOS 平台的额外功能接口（如调用系统 API、访问传感器等）。 | `QAndroidJniObject`（Android）、`QIOSApplicationDelegate`（iOS） |
+
+#### 3.4.6 其他模块
+
+| 模块名称              | 功能说明                                                     | 核心类示例                               |
+| --------------------- | ------------------------------------------------------------ | ---------------------------------------- |
+| **Qt Test**           | 单元测试框架，用于编写和运行 Qt 代码的自动化测试用例。       | `QTest`、`QTest::keyClick()`             |
+| **Qt Concurrent**     | 简化多线程编程，基于模板实现并行计算（无需直接操作 `QThread`）。 | `QtConcurrent::map`、`QtConcurrent::run` |
+| **Qt Linguist Tools** | 国际化与本地化工具，支持多语言翻译、字符串提取和替换。       | `QTranslator`、`QLocale`                 |
+
+#### 3.4.7 模块使用方式
+
+在 Qt 项目中，通过 `.pro` 文件（Qt 构建文件）引入模块，例如：
+
+~~~C++
+# 引入核心模块
+QT += core gui widgets
+
+# 引入扩展模块（按需添加）
+QT += network sql multimedia
+~~~
+
+在 C++ 代码中，通过 `#include` 引入模块中的类，例如：
+
+~~~C++
+#include <QWidget>      // Qt Widgets 模块
+#include <QTcpSocket>   // Qt Network 模块
+#include <QSqlDatabase> // Qt Sql 模块
+~~~
+
 ### 3.end 项目练习
 
 #### 元对象特性测试实例
@@ -223,4 +298,10 @@ for (auto it = vec.begin(); it != vec.end(); ++it) {
 
 **链接错误**，原因是声明了函数但未实现，**只要是声明的函数一定要显示申明，这个是属于链接问题！**
 
-#### 
+## 第四章
+
+### 4.1 字符串QString
+
+![image-20251114171138198](./assets/image-20251114171138198.png)
+
+4.end

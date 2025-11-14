@@ -16,8 +16,7 @@ ui_page1::ui_page1(QWidget *parent)
     resize(600, 400);  // 设置初始窗口大小
 
     m_pSpinBoyAge->setProperty("isBoy",true); // 设置动态属性
-    m_pPinGirlAge->setProperty("isBoy",false);
-}
+    m_pPinGirlAge->setProperty("isBoy",false);}
 
 // 析构函数
 ui_page1::~ui_page1()
