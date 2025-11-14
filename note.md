@@ -91,6 +91,115 @@ QMetaObject::invokeMethod(&obj, "onValueChanged", Q_ARG(int, 100));
 
 
 
+### 3.2 全局定义
+
+![image-20251114154933076](./assets/image-20251114154933076.png)
+
+**还有很多，查资料或者开发手册即可**
+
+### 3.3 容器类
+
+Qt 提供了一套功能丰富的容器类（Container Classes），用于存储和管理数据，类似于 C++ 标准库的 STL 容器，但针对 Qt 的特性（如跨平台、元对象系统、隐式共享等）进行了优化。这些容器类类型安全、使用便捷，且支持 Qt 的迭代器、算法等工具。
+
+#### 3.3.1 常用容器类分类及示例
+
+Qt 容器主要分为**顺序容器**（线性存储）和**关联容器**（键值对存储），以下是最常用的类型：
+
+##### 3.3.1.1 顺序容器
+
+按线性顺序存储元素，支持索引访问。
+
+| 容器类             | 特点与用途                                                   | 示例代码                                                     |
+| ------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| **QList<T>**       | 最常用的容器，动态数组，支持快速随机访问，适合存储小型元素（如 int、指针）。内部使用数组 + 链表混合实现，插入删除效率高。 | `cpp QList<int> list; list << 1 << 2 << 3; // 插入元素 int val = list[1]; // 访问（索引从0开始） list.removeAt(0); // 删除第一个元素` |
+| **QVector<T>**     | 连续内存的动态数组，与 C++ 原生数组兼容，适合存储大型元素或需要频繁随机访问的场景。 | `cpp QVector<QString> vec; vec.append("Qt"); vec.append("Container"); for (auto s : vec) { qDebug() << s; }` |
+| **QLinkedList<T>** | 双向链表，适合频繁在中间插入 / 删除元素（时间复杂度 O (1)），但随机访问效率低（O (n)）。 | `cpp QLinkedList<double> linked; linked.push_back(3.14); linked.push_front(2.71); linked.removeFirst();` |
+| **QByteArray**     | 专门存储字节数据（char 序列），比 `QList<char>` 更高效，常用于文件 I/O、网络数据传输。 | `cpp QByteArray ba = "Hello Qt"; ba.append("!"); const char* data = ba.data(); // 转为 C 风格字符串` |
+| **QStringList**    | 继承自 `QList<QString>`，专为字符串列表设计，提供额外字符串相关方法（如 `join`、`filter`）。 | `cpp QStringList strList = {"apple", "banana"}; strList << "orange"; QString all = strList.join(", "); // 拼接为 "apple, banana, orange"` |
+
+##### 3.3.1.2 关联容器
+
+按键（Key）存储元素，支持快速查找（基于哈希表或红黑树）。
+
+| 容器类                | 特点与用途                                                   | 示例代码                                                     |
+| --------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| **QMap<Key, T>**      | 按键排序的映射表（基于红黑树），键唯一，支持范围查找，适合需要有序遍历的场景。 | `cpp QMap<QString, int> map; map["one"] = 1; map["two"] = 2; int val = map.value("one"); // 获取值（默认返回0） for (auto it = map.begin(); it != map.end(); ++it) { qDebug() << it.key() << ":" << it.value(); }` |
+| **QMultiMap<Key, T>** | 支持重复键的映射表（继承自 `QMap`），适合一对多的映射关系（如 “标签 - 文件”）。 | `cpp QMultiMap<QString, int> multiMap; multiMap.insert("score", 90); multiMap.insert("score", 85); // 重复键 QList<int> scores = multiMap.values("score"); // 获取所有值` |
+| **QHash<Key, T>**     | 基于哈希表的映射表，查找速度比 `QMap` 更快（平均 O (1)），但键无序，要求 Key 支持 `operator==` 和哈希函数。 | `cpp QHash<int, QString> hash; hash[100] = "满分"; hash[60] = "及格"; if (hash.contains(60)) { qDebug() << hash[60]; }` |
+| **QSet<T>**           | 基于 `QHash` 的集合（无重复元素，无序），适合去重、集合运算（交集、并集）。 | `cpp QSet<int> set; set << 1 << 2 << 2; // 自动去重 QSet<int> set2 = {2, 3}; QSet<int> intersection = set & set2; // 交集 {2}` |
+
+#### 3.3.2 容器的迭代器（Iterators）
+
+Qt 容器支持两种迭代器，用法类似 STL：
+
+##### 3.3.2.1 **Java 风格迭代器**（适合初学者，API 更直观）
+
+- `QListIterator<T>`：只读迭代器
+- `QMutableListIterator<T>`：可修改元素的迭代器
+
+~~~C++
+QList<int> list = {1, 2, 3};
+QListIterator<int> it(list); // 只读迭代器
+while (it.hasNext()) {
+    qDebug() << it.next(); // 遍历元素
+}
+
+QMutableListIterator<int> mit(list);
+while (mit.hasNext()) {
+    if (mit.next() == 2) {
+        mit.setValue(20); // 修改元素值
+    }
+}
+~~~
+
+##### 3.3.2.2 **STL 风格迭代器**（兼容 STL 算法，适合熟悉 STL 的开发者）
+
+- `const_iterator`：只读迭代器
+- `iterator`：可修改迭代器
+
+~~~c++
+QVector<QString> vec = {"a", "b", "c"};
+// 只读遍历
+for (QVector<QString>::const_iterator it = vec.begin(); it != vec.end(); ++it) {
+    qDebug() << *it;
+}
+// 修改元素
+for (auto it = vec.begin(); it != vec.end(); ++it) {
+    *it = *it + "x";
+}
+~~~
+
+#### 3.3.3 容器的常用操作
+
+所有 Qt 容器都支持一些通用操作：
+
+- 插入：`append()`、`prepend()`、`insert()`
+
+- 删除：`removeAt()`、`removeOne()`、`clear()`
+
+- 查找：`contains()`、`indexOf()`、`find()`
+
+- 大小：`size()`、`isEmpty()`
+
+- 遍历：`foreach` 关键字（Qt 扩展，简化遍历）
+
+  示例（`foreach` 遍历）：
+
+  ~~~C++
+  QStringList list = {"Qt", "C++", "Container"};
+  foreach (const QString &s, list) { // 注意：变量前需加 const（只读）
+      qDebug() << s;
+  }
+  ~~~
+
+#### 3.3.4 选择容器的建议
+
+1. 优先使用 `QList` 或 `QVector`：大多数场景下性能和易用性最佳。
+2. 存储字符串列表用 `QStringList`：提供更多字符串专属方法。
+3. 键值对且需排序用 `QMap`，无需排序用 `QHash`（速度更快）。
+4. 频繁中间插入 / 删除用 `QLinkedList`，但尽量避免（`QList` 通常足够高效）。
+5. 字节数据用 `QByteArray`，字符串用 `QString`（而非 `std::string`）。
+
 ### 3.end 项目练习
 
 #### 元对象特性测试实例
